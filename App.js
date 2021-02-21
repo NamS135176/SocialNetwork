@@ -12,6 +12,7 @@ import EditProfile from './components/EditProfile'
 import ConfirmPassword from './components/ConfirmPassword'
 import ChangePassScreen from './components/ChangePassScreen'
 import TimelineScreen from './components/TimelineScreen'
+import CommentScreen from './components/CommentScreen'
 const RootStack = createStackNavigator();
 function LogoTitle() {
   return (
@@ -25,13 +26,16 @@ export default function App() {
   return (
     <NavigationContainer>
       <RootStack.Navigator  >
+      
       <RootStack.Screen options={{headerShown:false}} name="Login" component={Login} />
       <RootStack.Screen name="Post" component={PostScreen} options={{headerStyle:{backgroundColor:"#D965D9"}, headerTitleStyle:{color:"white"}}}/>
       <RootStack.Screen name="MainScreen" component={MainScreen}  options={{headerStyle:{backgroundColor:"#D965D9"}, headerTitleStyle:{color:"white"}, headerTitle:props => <LogoTitle {...props} />}} />
       <RootStack.Screen  name="EditProfile" component={EditProfile} />
+      <RootStack.Screen  name="CommentScreen" component={CommentScreen} />
       <RootStack.Screen  name="ConfirmPassword" component={ConfirmPassword} />
       <RootStack.Screen  name="ChangePassScreen" component={ChangePassScreen} />
       <RootStack.Screen  name="TimelineScreen" component={TimelineScreen} />
+      
       <RootStack.Screen options={{headerShown:false}} name="SignUp" component={SignUp} />
     </RootStack.Navigator>
   </NavigationContainer>

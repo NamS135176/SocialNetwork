@@ -69,11 +69,11 @@ export default function ListItem(props) {
                 <View style={{ flex: 1, backgroundColor: 'white', alignItems: "center", flexDirection: "row", justifyContent: "space-around" }}>
                     <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-start", alignItems: "center" }}>
                         {
-                            props.item.avatar == "" ? <Image source={require('../images/icon_account.png')} style={{ width: 60, height: 60, borderRadius: 30, marginHorizontal: 20, borderWidth:2, borderColor:"#ccc" }}></Image> :
-                                <Image source={{ uri: props.item.avatar }} style={{ width: 60, height: 60, borderRadius: 30, marginHorizontal: 20 , borderWidth:2, borderColor:"#ccc"}}></Image>
+                            props.item.avatar == "" ? <Image source={require('../images/icon_account.png')} style={{ width: 60, height: 60, borderRadius: 30, marginHorizontal: 20, borderWidth: 2, borderColor: "#ccc" }}></Image> :
+                                <Image source={{ uri: props.item.avatar }} style={{ width: 60, height: 60, borderRadius: 30, marginHorizontal: 20, borderWidth: 2, borderColor: "#ccc" }}></Image>
                         }
 
-                        <Text style={{ fontSize: 20 ,fontWeight:"bold"}}>{props.item.userName}</Text>
+                        <Text style={{ fontSize: 20, fontWeight: "bold" }}>{props.item.userName}</Text>
                     </View>
                     <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end", alignItems: "center", paddingRight: 20 }}><Text style={{}}>{props.item.time.split(" ")[1] + " " + props.item.time.split(" ")[2]}</Text></View>
 
@@ -82,7 +82,7 @@ export default function ListItem(props) {
             </View>
             <View style={{ width: "100%", backgroundColor: 'white' }}>
                 {props.item.status == "" ? <View></View> : <Text style={{ padding: 25, fontSize: 20 }}>{props.item.status}</Text>}
-                
+
             </View>
             {props.item.photoURL != null ? <View style={{ width: "100%", backgroundColor: 'white' }}>
                 <Image style={{ width: "100%", height: 600 }} source={{ uri: props.item.photoURL }}></Image>
@@ -104,7 +104,17 @@ export default function ListItem(props) {
                         </View>}
                     <View style={{ flex: 1, flexDirection: "row", justifyContent: "center" }} >
                         <MaterialIcon name="comment" size={22} color="black" />
-                        <Text style={{ textAlign: "center" }}>{props.item.commentCount} Comment</Text>
+                        <TouchableOpacity onPress={() => {
+                            console.log(props.item.id);
+                            props.nav.navigate("CommentScreen",{
+                                PostID:props.item.id,
+                                user: props.user,
+                                commentCount: props.item.commentCount
+                            })
+                        } }>
+                            <Text style={{ textAlign: "center" }}>{props.item.commentCount} Comment</Text>
+                        </TouchableOpacity>
+
                     </View>
                     <View style={{ flex: 1, flexDirection: "row", justifyContent: "center" }} >
                         <Ionicons name='ios-share-social-outline' size={22} color="black" />

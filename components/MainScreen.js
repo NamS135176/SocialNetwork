@@ -53,11 +53,13 @@ const MainScreen = ({ route, navigation }) => {
   let [user, setUser] = useState(null);
   let [re, setRe] = useState(null)
   let [data, setData] = useState(null)
+  let [isLoading, setIsloading] = useState(false)
   let { reload } = route.params
   useEffect(() => {
     setRe(reload)
     setUser(firebaseApp.auth().currentUser)
     try {
+      setIsloading(true)
       firebaseApp.database().ref('Posts/').on('value', function (snapshot) {
         let arr = [];
         snapshot.forEach(element => {
@@ -101,11 +103,13 @@ const MainScreen = ({ route, navigation }) => {
               }
             })
           })
+          setIsloading(false)
           // console.log(arr);
           setData(arr)
         });
       })
     } catch (error) {
+      setIsloading(false)
       setData([])
     }
     LogBox.ignoreAllLogs();
@@ -118,7 +122,7 @@ const MainScreen = ({ route, navigation }) => {
     })
   }, [])
   return (
-      <Tab.Navigator
+    <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
@@ -141,10 +145,11 @@ const MainScreen = ({ route, navigation }) => {
           inactiveTintColor: 'gray'
         }}
       >
-        <Tab.Screen name="News" children={() => <NewsScreen data={data}></NewsScreen>} />
+        <Tab.Screen name="News" children={() => <NewsScreen data={data} nav={navigation}></NewsScreen>} />
         {/* <Tab.Screen name="Temp" children={() => <TempPost user={user}></TempPost>} /> */}
         <Tab.Screen name="User" children={() => <UserScreen user={user}></UserScreen>} />
       </Tab.Navigator>
+
   );
 };
 

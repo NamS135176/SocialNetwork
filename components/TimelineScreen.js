@@ -5,15 +5,19 @@ import { firebaseApp } from './FirebaseConfig';
 import ListItem from './ListItem'
 export default function TimelineScreen({ route }) {
     let [data, setData] = useState(null)
-    let { user } = route.params
+    let { user , nav} = route.params
     let [isLoading, setIsloading] = useState(false)
     useEffect(() => {
         let arr = []
         setIsloading(true)
         firebaseApp.database().ref('Posts/').orderByChild("uid").equalTo(user.providerData[0].uid).on("child_added", function (snapshot) {
             setIsloading(false)
-            arr.push(snapshot.val())
+            let childData = snapshot.val()
+            childData.id = snapshot.key
+            arr.push(childData)
+            console.log(childData);
         })
+        arr.reverse()
         setData(arr)
     }, [])
     return (
@@ -25,7 +29,7 @@ export default function TimelineScreen({ route }) {
             <FlatList
                 data={data}
                 renderItem={
-                    ({ item }) => <ListItem item={item} user={firebaseApp.auth().currentUser}></ListItem>
+                    ({ item }) => <ListItem item={item} user={firebaseApp.auth().currentUser} nav={nav}></ListItem>
                 }
             >
             </FlatList>

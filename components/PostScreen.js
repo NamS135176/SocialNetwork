@@ -44,7 +44,7 @@ const PostScreen = ({ route, navigation }) => {
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
             aspect: [3, 4],
-            quality: 1,
+            quality: 0.6,
         });
 
         console.log(result);

@@ -69,7 +69,8 @@ const UserScreen = (props) => {
                         onPress={
                             () => {
                                 navigation.navigate("TimelineScreen",{
-                                    user: props.user
+                                    user: props.user,
+                                    nav: navigation
                                 })
                             }
                         }

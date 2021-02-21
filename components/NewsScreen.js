@@ -9,7 +9,6 @@ import ListItem from './ListItem'
 const NewsScreen = (props) => {
     // let [data, setData] = useState(null);
     let [users, setUsers] = useState(null);
-
     useEffect(
         () => {
             LogBox.ignoreAllLogs(true)
@@ -21,11 +20,10 @@ const NewsScreen = (props) => {
 
     return (
         <View style={{ backgroundColor: '#333542' }}>
-
             <FlatList
                 data={props.data}
                 renderItem={
-                    ({ item }) => <ListItem item={item} user={firebaseApp.auth().currentUser}></ListItem>
+                    ({ item }) => <ListItem item={item} user={firebaseApp.auth().currentUser} nav={props.nav}></ListItem>
                 }
             >
 
