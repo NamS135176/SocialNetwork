@@ -23,7 +23,7 @@ const NewsScreen = (props) => {
             <FlatList
                 data={props.data}
                 renderItem={
-                    ({ item }) => <ListItem item={item} user={firebaseApp.auth().currentUser} nav={props.nav}></ListItem>
+                    ({ item }) => <ListItem item={item} user={firebaseApp.auth().currentUser} nav={props.nav} isEdit={false}></ListItem>
                 }
             >
 

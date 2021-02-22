@@ -13,12 +13,12 @@ export default function ConfirmPassword({route, navigation}) {
     }
 
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',backgroundColor: '#333542' }}>
             <Spinner
                 visible={isLoading}
                 textStyle={{ color: '#FFF' }}
             />
-            <Text>Để bảo mật thông tin, vui lòng nhập lại mật khẩu!</Text>
+            <Text style={{color:"white"}}>Để bảo mật thông tin, vui lòng nhập lại mật khẩu!</Text>
             <InputCom width="80%" place="password" isPass={true} src={require('../images/icon_password.png')} onChange={handleChangePassword}></InputCom>
             <View style={[{ width: "80%", margin: 10, alignSelf: 'center' }]}>
                 <Button

@@ -5,6 +5,12 @@ import { FlatList, ScrollView, TouchableOpacity } from 'react-native-gesture-han
 import Spinner from 'react-native-loading-spinner-overlay';
 import MaterialIcon from '@expo/vector-icons/MaterialIcons';
 import { firebaseApp, storage } from './FirebaseConfig'
+import {
+    Menu,
+    MenuOptions,
+    MenuOption,
+    MenuTrigger,
+} from 'react-native-popup-menu';
 export default function ListItem(props) {
 
     let [isLiked, setIsLiked] = useState(false);
@@ -75,7 +81,32 @@ export default function ListItem(props) {
 
                         <Text style={{ fontSize: 20, fontWeight: "bold" }}>{props.item.userName}</Text>
                     </View>
-                    <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end", alignItems: "center", paddingRight: 20 }}><Text style={{}}>{props.item.time.split(" ")[1] + " " + props.item.time.split(" ")[2]}</Text></View>
+                    <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end", alignItems: "center", paddingRight: 20 }}>
+
+                        {
+                            props.isEdit == true ? <Menu>
+                                <MenuTrigger >
+                                    <Ionicons name="settings" size={25} color="black" />
+                                </MenuTrigger>
+                                <MenuOptions>
+                                    <MenuOption onSelect={() => { 
+                                        props.nav.navigate("EditPost",{
+                                           id: props.item.id
+                                        })
+                                    }} text='Edit' />
+                                    <MenuOption onSelect={() => {
+                                        firebaseApp.database().ref('Posts/'+props.item.id).remove()
+                                        props.nav.navigate("MainScreen", {
+                                            reload: 1
+                                        })
+                                     }} >
+                                        <Text style={{ color: 'red' }}>Delete</Text>
+                                    </MenuOption>
+                                    {/* <MenuOption onSelect={() => alert(`Not called`)} disabled={true} text='Disabled' /> */}
+                                </MenuOptions>
+                            </Menu> : <View></View>
+                        }
+                        <Text style={{ marginLeft: 10 }}>{props.item.time.split(" ")[1] + " " + props.item.time.split(" ")[2]}</Text></View>
 
                 </View>
 
@@ -88,65 +119,90 @@ export default function ListItem(props) {
                 <Image style={{ width: "100%", height: 600 }} source={{ uri: props.item.photoURL }}></Image>
 
             </View> : <View></View>}
-            <View style={{ width: "100%", height: 50, backgroundColor: 'white', marginBottom: 20, borderTopWidth: 1, borderTopColor: "black" }}>
-                <View style={{ flex: 1, backgroundColor: 'white', flexDirection: 'row', justifyContent: "space-around", alignItems: "center" }}>
-                    {isLiked == false ? <View style={{ flex: 1, flexDirection: "row", justifyContent: "center" }} >
-                        <TouchableOpacity onPress={like}><Ionicons name='ios-heart-outline' size={22} color="black" /></TouchableOpacity>
-                        <TouchableOpacity onPress={like}>
-                            <Text style={{ textAlign: "center", color: "black" }}>{props.item.likeCount} Like</Text>
-                        </TouchableOpacity>
+            {
+                props.isEdit == true ?
+                    <TouchableOpacity onPress={() => {
+                        props.nav.navigate("CommentScreen", {
+                            PostID: props.item.id,
+                            user: props.user,
+                            commentCount: props.item.commentCount
+                        })
+                    }}>
+                        <View style={{ width: "100%", height: 50, backgroundColor: 'white', marginBottom: 20, borderTopWidth: 1, borderTopColor: "black" }}>
+                            <View style={{flex:1, flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
+                            <View style={{flex:1, flexDirection:"row"}}>
+                            <Text style={{ textAlign: "center", color: "red" , paddingLeft:20}}>{props.item.likeCount}</Text>
+                            <Ionicons name='ios-heart' size={22} color="red" />
+                            </View>
+                            <View style={{flex:1, flexDirection:"row", justifyContent:"flex-end", paddingRight:20}}>
+                            <Text style={{ textAlign: "center", color: "black"}}>{props.item.commentCount}</Text>
+                            <MaterialIcon name="comment" size={22} color="black" />
+                            </View>
+                            </View>
+                        </View>
+                    </TouchableOpacity>
 
-                    </View> : <View style={{ flex: 1, flexDirection: "row", justifyContent: "center" }} >
-                            <TouchableOpacity onPress={like}><Ionicons name='ios-heart' size={22} color="red" /></TouchableOpacity>
-                            <TouchableOpacity onPress={like}>
-                                <Text style={{ textAlign: "center", color: "red" }}>{props.item.likeCount} Like</Text>
-                            </TouchableOpacity>
-                        </View>}
-                    <View style={{ flex: 1, flexDirection: "row", justifyContent: "center" }} >
-                        <MaterialIcon name="comment" size={22} color="black" />
-                        <TouchableOpacity onPress={() => {
-                            console.log(props.item.id);
-                            props.nav.navigate("CommentScreen",{
-                                PostID:props.item.id,
-                                user: props.user,
-                                commentCount: props.item.commentCount
-                            })
-                        } }>
-                            <Text style={{ textAlign: "center" }}>{props.item.commentCount} Comment</Text>
-                        </TouchableOpacity>
+                    :
+                    <View style={{ width: "100%", height: 50, backgroundColor: 'white', marginBottom: 20, borderTopWidth: 1, borderTopColor: "black" }}>
+                        <View style={{ flex: 1, backgroundColor: 'white', flexDirection: 'row', justifyContent: "space-around", alignItems: "center" }}>
+                            {isLiked == false ? <View style={{ flex: 1, flexDirection: "row", justifyContent: "center" }} >
+                                <TouchableOpacity onPress={like}><Ionicons name='ios-heart-outline' size={22} color="black" /></TouchableOpacity>
+                                <TouchableOpacity onPress={like}>
+                                    <Text style={{ textAlign: "center", color: "black" }}>{props.item.likeCount} Like</Text>
+                                </TouchableOpacity>
 
-                    </View>
-                    <View style={{ flex: 1, flexDirection: "row", justifyContent: "center" }} >
-                        <Ionicons name='ios-share-social-outline' size={22} color="black" />
-                        <TouchableOpacity onPress={async () => {
-                            try {
-                                const result = await Share.share({
-                                    message: props.item.status,
-                                    photoURL: props.item.photoURL
-                                });
-                                if (result.action === Share.sharedAction) {
-                                    if (result.activityType) {
-                                        // shared with activity type of result.activityType
-                                        console.log('a')
-                                    } else {
-                                        console.log('b')
-                                        // shared
+                            </View> : <View style={{ flex: 1, flexDirection: "row", justifyContent: "center" }} >
+                                    <TouchableOpacity onPress={like}><Ionicons name='ios-heart' size={22} color="red" /></TouchableOpacity>
+                                    <TouchableOpacity onPress={like}>
+                                        <Text style={{ textAlign: "center", color: "red" }}>{props.item.likeCount} Like</Text>
+                                    </TouchableOpacity>
+                                </View>}
+                            <View style={{ flex: 1, flexDirection: "row", justifyContent: "center" }} >
+                                <MaterialIcon name="comment" size={22} color="black" />
+                                <TouchableOpacity onPress={() => {
+                                    console.log(props.item.id);
+                                    props.nav.navigate("CommentScreen", {
+                                        PostID: props.item.id,
+                                        user: props.user,
+                                        commentCount: props.item.commentCount
+                                    })
+                                }}>
+                                    <Text style={{ textAlign: "center" }}>{props.item.commentCount} Comment</Text>
+                                </TouchableOpacity>
+
+                            </View>
+                            <View style={{ flex: 1, flexDirection: "row", justifyContent: "center" }} >
+                                <Ionicons name='ios-share-social-outline' size={22} color="black" />
+                                <TouchableOpacity onPress={async () => {
+                                    try {
+                                        const result = await Share.share({
+                                            message: props.item.status,
+                                            photoURL: props.item.photoURL
+                                        });
+                                        if (result.action === Share.sharedAction) {
+                                            if (result.activityType) {
+                                                // shared with activity type of result.activityType
+                                                console.log('a')
+                                            } else {
+                                                console.log('b')
+                                                // shared
+                                            }
+                                        } else if (result.action === Share.dismissedAction) {
+                                            console.log('c')
+                                            // dismissed
+                                        }
+                                    } catch (error) {
+                                        alert(error.message);
                                     }
-                                } else if (result.action === Share.dismissedAction) {
-                                    console.log('c')
-                                    // dismissed
-                                }
-                            } catch (error) {
-                                alert(error.message);
-                            }
-                        }}>
-                            <Text style={{ textAlign: "center" }}>Share</Text>
-                        </TouchableOpacity>
+                                }}>
+                                    <Text style={{ textAlign: "center" }}>Share</Text>
+                                </TouchableOpacity>
+
+                            </View>
+                        </View>
 
                     </View>
-                </View>
-
-            </View>
+            }
         </View>
     )
 }

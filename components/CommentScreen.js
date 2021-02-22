@@ -60,32 +60,37 @@ export default function CommentScreen({route}) {
                 <TextInput onChangeText={(txt)=>{setCommentContent(txt)}} placeholder="Your Comment Here..." placeholderTextColor="white" style={{ width: 350, fontSize: 15 , paddingLeft:20}}></TextInput>
                 <TouchableOpacity onPress={()=>{
                     // setIsloading(true)
-                    let id = Date.now()
-                    firebaseApp.database().ref('Comments/'+id).set({
-                        commentContent: commentContent,
-                        time: Date(),
-                        userName: user.providerData[0].displayName,
-                        avatar: user.photoURL,
-                        PostID: PostID,
-                        ID: id,
-                        uid: user.providerData[0].uid
-                    }, function (error) {
-                        // setIsloading(false)
-                        if (error) {
+                    if(commentContent == ""){
+
+                    }
+                    else{
+                        let id = Date.now()
+                        firebaseApp.database().ref('Comments/'+id).set({
+                            commentContent: commentContent,
+                            time: Date(),
+                            userName: user.providerData[0].displayName,
+                            avatar: user.photoURL,
+                            PostID: PostID,
+                            ID: id,
+                            uid: user.providerData[0].uid
+                        }, function (error) {
                             // setIsloading(false)
-                            // The write failed...
-                            alert('Loi')
-                        } else {
-                            let arr = []
-                           
-                            firebaseApp.database().ref('Comments/').orderByChild("PostID").equalTo(PostID).on("child_added", function (snapshot) {
-                                arr.push(snapshot.val())
-                            })
-                            firebaseApp.database().ref('Posts/'+PostID).update({commentCount:eval(ccount+1)}).then(() => {setCcount(ccount+1)})
-                            console.log(arr);
-                            setData(arr)
-                        }
-                    });
+                            if (error) {
+                                // setIsloading(false)
+                                // The write failed...
+                                alert('Loi')
+                            } else {
+                                let arr = []
+                               
+                                firebaseApp.database().ref('Comments/').orderByChild("PostID").equalTo(PostID).on("child_added", function (snapshot) {
+                                    arr.push(snapshot.val())
+                                })
+                                firebaseApp.database().ref('Posts/'+PostID).update({commentCount:eval(ccount+1)}).then(() => {setCcount(ccount+1)})
+                                console.log(arr);
+                                setData(arr)
+                            }
+                        });
+                    }
                 }}>
                 <Image source={require('../images/sent.png')} style={{ width: 30, height: 30,  marginHorizontal: 20, borderWidth:2, borderColor:"#ccc" }}></Image>
                 </TouchableOpacity>

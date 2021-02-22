@@ -9,6 +9,7 @@ import UserScreen from './UserScreen'
 import Login from './Login';
 import { firebaseApp } from './FirebaseConfig';
 import TempPost from './TempPost'
+import ReplaceUserScreen from './ReplaceUserScreen'
 
 //  function HomeScreen({route,navigation}) {
 //    let {user} = route.params
@@ -54,6 +55,8 @@ const MainScreen = ({ route, navigation }) => {
   let [re, setRe] = useState(null)
   let [data, setData] = useState(null)
   let [isLoading, setIsloading] = useState(false)
+  let [userPostCount, setUserPostCount] = useState(0);
+  let [totalLikeCount, setTotalLike] = useState(0)
   let { reload } = route.params
   useEffect(() => {
     setRe(reload)
@@ -62,8 +65,14 @@ const MainScreen = ({ route, navigation }) => {
       setIsloading(true)
       firebaseApp.database().ref('Posts/').on('value', function (snapshot) {
         let arr = [];
+        let i = 0
+        let totalLike = 0
         snapshot.forEach(element => {
           let childData = element.val()
+          if(childData.uid == firebaseApp.auth().currentUser.providerData[0].uid){
+            i++
+            totalLike += childData.likeCount
+          }
           arr.push({
             id: element.key,
             photoURL: childData.photoURL,
@@ -77,9 +86,10 @@ const MainScreen = ({ route, navigation }) => {
             liked: JSON.parse(childData.liked)
           })
         })
+        setTotalLike(totalLike)
+        setUserPostCount(i)
         arr.reverse()
-        // setData(arr)
-        // console.log(arr);
+
         firebaseApp.database().ref('Users/').on('value', function (snapshot) {
           let array = []
           snapshot.forEach(function (childSnapshot) {
@@ -105,6 +115,7 @@ const MainScreen = ({ route, navigation }) => {
           })
           setIsloading(false)
           // console.log(arr);
+
           setData(arr)
         });
       })
@@ -132,8 +143,8 @@ const MainScreen = ({ route, navigation }) => {
               iconName = focused ? 'ios-person-circle-outline' : 'ios-person-circle-outline';
             }
             else if(route.name === "Temp"){
-              iconName = focused ? 'add-circle-outline' : 'add-circle-outline'
-              size = 50
+              iconName = focused ? 'ios-person-circle-outline' : 'ios-person-circle-outline';
+              
             }
 
             // You can return any component that you like here!
@@ -146,8 +157,8 @@ const MainScreen = ({ route, navigation }) => {
         }}
       >
         <Tab.Screen name="News" children={() => <NewsScreen data={data} nav={navigation}></NewsScreen>} />
-        {/* <Tab.Screen name="Temp" children={() => <TempPost user={user}></TempPost>} /> */}
-        <Tab.Screen name="User" children={() => <UserScreen user={user}></UserScreen>} />
+        <Tab.Screen name="User" children={() => <ReplaceUserScreen user={user} postCount={userPostCount} totalLike={totalLikeCount}></ReplaceUserScreen>} />
+        {/* <Tab.Screen name="User" children={() => <UserScreen user={user} postCount={userPostCount} totalLike={totalLikeCount}></UserScreen>} /> */}
       </Tab.Navigator>
 
   );

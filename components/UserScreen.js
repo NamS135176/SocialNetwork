@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, Dimensions, StyleSheet, TextInput, Button } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
@@ -41,15 +41,13 @@ const UserScreen = (props) => {
                         }}>
                             <MaterialIcon name="settings" size={35} color="yellow" />
                         </TouchableOpacity>
-                        </View>
-                    {/* <Text onPress={() => {
-                        navigation.navigate('EditProfile', {
-                            user: props.user
-                        })
-                    }} style={{ color: "yellow", fontSize: 20 }}>Edit Profile</Text> */}
+                    </View>
                 </View>
 
             </View>
+            <Text>Post: {props.postCount}</Text>
+            <Text>Like: {props.totalLike}</Text>
+            {/* <Text> {totalLike}</Text> */}
             <View style={{ height: 60, paddingHorizontal: 10 }}>
                 <View style={styles.textAreaContainer} >
                     <Text onPress={() => {
@@ -68,7 +66,7 @@ const UserScreen = (props) => {
                         hardwareAccelerated
                         onPress={
                             () => {
-                                navigation.navigate("TimelineScreen",{
+                                navigation.navigate("TimelineScreen", {
                                     user: props.user,
                                     nav: navigation
                                 })

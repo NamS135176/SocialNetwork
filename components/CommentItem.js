@@ -16,8 +16,6 @@ export default function CommentItem(props) {
         firebaseApp.database().ref('Comments/'+props.item.ID).remove()
         firebaseApp.database().ref('Posts/'+props.item.PostID).update({commentCount:eval(props.commentCount -1)}).then(() => {})
             props.removeData()
-
-        
     }
     return (
         <View style={{ width: "100%" }}>
